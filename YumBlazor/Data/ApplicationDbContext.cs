@@ -14,9 +14,9 @@ namespace YumBlazor.Data
 
             builder.Entity<Category>().HasData(
 
-                new Category { CatId=1, Name="Appetizer"},
-                new Category { CatId=1, Name="Entree"},
-                new Category { CatId=1, Name="Dessert"}
+                new Category { Id = 1, Name = "Appetizer" },
+                new Category { Id = 2, Name = "Entree" },
+                new Category { Id = 3, Name = "Dessert" }
                 );
         }
     }

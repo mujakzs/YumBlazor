@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -17,7 +17,6 @@
   <ItemGroup>
     <Folder Include="Services\Extension\" />
     <Folder Include="Services\" />
-    <Folder Include="Repository\IRepository\" />
     <Folder Include="ViewModels\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\Js\" />
