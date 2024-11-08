@@ -1,8 +1,11 @@
 ﻿@page "/Category/Create"
 @page "/Category/Update/{id:int}"
 @inject ICategoryRepository _categoryRepository
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _JSRuntime
 @using YumBlazor.Repository.IRepository
 @using YumBlazor.Data
+@using YumBlazor.Services.Extension
 
 @if (IsProcessing)
 {
@@ -22,11 +25,34 @@ else
         </div>
 
         <div class="card-body p-4">
-            <div class="row pb-3">
-                <div class="col-12 text-end">
-                    <a href="Category/Create" class="btn btn-lg btn-secondary" style="width:250px"> <i class="bi bi-plus-square"></i> Add New Category</a>
+            <EditForm Model ="Category" FormName="CategoryUpsertForm" OnValidSubmit="UpsertCategory">
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                <div class="border p-3 mt-4">
+                    <div class="form-floating py-3 col-12">
+                        <InputText @bind-Value="Category.Name" class="form-control" id="Name" placeholder="Name"> </InputText>
+                        <label for="Name">Name</label>
+                        <ValidationMessage For="@(() => Category.Name)"></ValidationMessage>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6 col-md-3">
+                            <button type="submit" class="btn btn-primary form-control" disabled="@IsProcessing">
+                                <i class="bi bi-floppy2-fill"></i>
+                                Update
+                            </button>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <a href="category" class="btn btn-secondary form-control" disabled="@IsProcessing">
+                                <i class="bi bi-arrow-bar-left"></i>
+                                Back to list
+                            </a>
+                        </div>
+
+                    </div>
+
                 </div>
-            </div>
+            </EditForm>
 
         </div>
     </div>
@@ -60,5 +86,24 @@ else
             Category = await _categoryRepository.GetAsync(Id);
 
         }
+    }
+
+    private async Task UpsertCategory()
+    {
+        IsProcessing = true;
+        if(Category.Id == 0)
+        {
+            //Create
+            await _categoryRepository.CreateAsync(Category);
+            await _JSRuntime.ToastrSuccess("Category Created Successfully");
+        }
+        else
+        {
+            //Update
+            await _categoryRepository.UpdateAsync(Category);
+            await _JSRuntime.ToastrSuccess("Category Updated Successfully");
+        }
+        IsProcessing = false;
+        _navigationManager.NavigateTo("category");
     }
 }
