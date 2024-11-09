@@ -6,7 +6,8 @@
 @inject IJSRuntime _JS
 @page "/Category"
 
-<BsModal OnModalConfirmation="ConfirmDelete_Click"></BsModal>
+<BsModal OnModalConfirmation="ConfirmDelete_Click" 
+    ButtonBootstrapStyle="btn-danger" ButtonText="Delete" Title="Are you sure you want to delete this category?"></BsModal>
 
 @if (IsProcessing)
 {
@@ -22,6 +23,10 @@ else{
                     <h2 class="text-white py-2">Category List</h2>
                 </div>
             </div>
+        </div>
+        <div class="pt-2 p-2">
+            <input @oninput="Search" placeholder="search... " class="p-3" style="width:100%" />
+
         </div>
 
         <div class="card-body p-4">
@@ -67,6 +72,7 @@ else{
     private int DeleteCategoryID { get; set; } = 0;
 
     private IEnumerable<Category> Categories { get; set; } = new List<Category>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,6 +120,23 @@ else{
         }
         DeleteCategoryID = 0;
         IsProcessing = false;
+    }
+
+    private async void Search(ChangeEventArgs e)
+    {
+        var searchTerm = (string)e.Value;
+
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            await LoadCategories(); // Reload all categories when search term is cleared.
+        }
+        else
+        {
+            // Filter the Categories collection by name.
+            Categories = Categories.Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        StateHasChanged();
     }
 
 }
