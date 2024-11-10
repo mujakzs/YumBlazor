@@ -1,0 +1,47 @@
+﻿@page "/UserInfo"
+@inject IUserInfoRepository _userInfoRepo
+
+@if (IsLoading)
+{
+    <div class="position-absolute w-75 h-75 d-flex flex-column align-items-center bg-white justify-content-center">
+        <img src="/images/loading.gif" alt="loading" />
+    </div>
+}
+else
+{
+    <div class="card shadow border-0 mt-4">
+        <div class="card-header bg-black bg-gradient m-lg-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="text-white py-2">User List</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+@code {
+    private bool IsLoading { get; set; } = true;
+
+    private IEnumerable<UserInfo> UserDetails { get; set; } = new List<UserInfo>();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadUserInfo();
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadUserInfo()
+    {
+        UserDetails = await _userInfoRepo.GetAllAsync();
+    }
+
+}
