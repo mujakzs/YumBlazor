@@ -1,6 +1,14 @@
 ﻿@page "/UserInfo"
 @inject IUserInfoRepository _userInfoRepo
 @inject IJSRuntime _js
+@using YumBlazor.Components.Shared
+@using YumBlazor.Services.Extension
+
+<BsModal OnModalConfirmation="ConfirmDelete_Click" ButtonBootstrapStyle="btn-danger"
+    ButtonText="Delete"
+    Title="Delete This User Info?">
+
+</BsModal>
 
 @if (IsLoading)
 {
@@ -92,10 +100,31 @@ else
         UserDetails = await _userInfoRepo.GetAllAsync();
     }
 
-    private async Task DelUser(int id)
+    private void DelUser(int id)
     {
         DeleteUserId = id;
-        
+        _js.InvokeVoidAsync("ShowConfirmationModal");
+
+    }
+
+    private async Task ConfirmDelete_Click(bool isConfirmed)
+    {
+        IsLoading = true;
+        await _js.InvokeVoidAsync("HideConfirmationModal");
+        if (isConfirmed && DeleteUserId != 0)
+        {
+            var result = await _userInfoRepo.DeleteAsync(DeleteUserId);
+            if (result)
+                _js?.ToastrSuccess("Category Delete Successfully");
+
+            else
+                _js?.ToastrError("Error Encountered while deleting");
+
+
+            await LoadUserInfo();
+        }
+        DeleteUserId = 0;
+        IsLoading = false;
     }
    
 

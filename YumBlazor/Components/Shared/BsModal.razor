@@ -9,10 +9,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>  
             </div>
-            <div class="modal-body">
-                <button type="button" class="btn btn-lg btn-secondary" data-dismiss="modal"
+            <div class="modal-body d-flex justify-content-between">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal"
                         @onclick="()=>ConfirmationClicked(false)" style="width:150px">
-                    Close
+                    Cancel
                 </button>
                 <button type="button" class="btn btn-lg @ButtonBootstrapStyle"
                         @onclick="()=>ConfirmationClicked(true)" style="width:150px">
@@ -22,7 +22,7 @@
             
         </div>
     </div>
-</div>
+</div>  
 @code {
 
     [Parameter]
@@ -45,4 +45,5 @@
         }
        
     }
+
 }
