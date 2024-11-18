@@ -50,7 +50,12 @@ else{
                                     @obj.Name
                                 </td>
                                 <td>
-                                    <a href="@($"Category/Update/{obj.Id}")" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
+                                    <a href="@($"Category/Update/{obj.Id}")" 
+                                        class="btn btn-primary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+
+
                                     <button class="btn btn-danger" @onclick="()=>HandleDelete(obj.Id)">
                                         <i class="bi bi-trash"></i> Delete</button>
                                 </td>

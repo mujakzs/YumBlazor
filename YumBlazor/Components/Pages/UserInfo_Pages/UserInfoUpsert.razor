@@ -1,8 +1,141 @@
-﻿@page "/CreateUser"
+﻿@page "/UserList/CreateUser"
+@page "/UserList/UpdateUser/{id:int}"
+@inject IUserInfoRepository _usrRepo
+@inject NavigationManager _navMan
+@using YumBlazor.Repository.IRepository
+@using YumBlazor.Data
+@using YumBlazor.Components.Shared
+@using YumBlazor.Services.Extension
+
+@if(IsProcessing)
+{
+    <div class="position-absolute w-75 h-75 d-flex flex-column align-items-center bg-white justify-content-center">
+        <img src="/images/loading.gif" alt="loading" />
+    </div>
+}
+else{
+    <div class="card shadow border-0 mt-4">
+        <div class="card-header bg-black bg-gradient m-lg-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="text-white py-2">@(Id > 0 ? "Update" : "Create") User</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <EditForm Model="userInfo" FormName="userListForm" OnValidSubmit="UpsertUser">
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+                <div class="border p-3 mt-4">
+                    <div class="form-floating py-3 col-12">
+                        <InputText @bind-Value="userInfo.FirstName" 
+                        class="form-control"
+                        id="FirstName" 
+                        placeholder="First name">
+                        </InputText>
+                        <label for="FirstName">First Name</label>
+                        <ValidationMessage For="@(()=> userInfo.FirstName)"></ValidationMessage>
+                    </div>
+
+                    <div class="form-floating py-3 col-12">
+                        <InputText @bind-Value="userInfo.LastName"
+                        class="form-control"
+                        id="LastName"
+                        placeholder="Last name">
+                        </InputText>
+                        <label for="LastName">Last Name</label>
+                        <ValidationMessage For="@(()=> userInfo.LastName)"></ValidationMessage>
+                    </div>
+
+                    <div class="form-floating py-3 col-12">
+                        <InputText @bind-Value="userInfo.Email"
+                        class="form-control"
+                        id="email"
+                        placeholder="Email">
+                        </InputText>
+                        <label for="email">Email</label>
+                        <ValidationMessage For="@(()=> userInfo.Email)"></ValidationMessage>
+                    </div>
+
+                    <div class="form-floating py-3 col-12">
+                        <InputText @bind-Value="userInfo.Phone"
+                        class="form-control"
+                        id="phone"
+                        placeholder="Phone">
+                        </InputText>
+                        <label for="phone">Phone</label>
+                        <ValidationMessage For="@(()=> userInfo.Phone)"></ValidationMessage>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-6 col-md-3">
+                            <button type="submit" class="btn btn-primary form-control" disabled="@IsProcessing">
+                                <i class="bi bi-floppy2-fill"></i>
+                                Create
+                            </button>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <a href="UserInfo" class="btn btn-secondary form-control" disabled="@IsProcessing">
+                                <i class="bi bi-arrow-bar-left"></i>
+                                Back to list
+                            </a>
+                        </div>
+
+                    </div>
 
 
-<h2>Hello User Create</h2>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
 
 @code {
+    private bool IsProcessing { get; set; } = true;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private UserInfo userInfo { get; set; } = new UserInfo();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            await LoadUserInfo();
+            IsProcessing = false;
+            StateHasChanged();
+        }
+        // return   base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task LoadUserInfo()
+    {
+        if (Id > 0)
+        {
+            userInfo = await _usrRepo.GetAsync(Id);
+
+        }
+    }
+
+    private async Task UpsertUser()
+    {
+        IsProcessing = true;
+        if(userInfo.Id == 0)
+        {
+            await _usrRepo.CreateAsync(userInfo);
+        }
+        else
+        {
+            await _usrRepo.UpdateAsync(userInfo);
+        }
+
+        IsProcessing = false;
+        _navMan.NavigateTo("UserInfo");
+
+    }
 
 }
