@@ -17,6 +17,50 @@ else
                 </div>
             </div>
         </div>
+
+        <div class="card-body p-4">
+            <div class="row pb-3">
+                <div class="col-12 text-end">
+                    <a href="/CreateUser" class="btn btn-lg btn-secondary" style="width:250px"> 
+                        <i class="bi bi-plus-square"> 
+                             Add User Info
+                        </i>
+                    </a>
+                </div>
+            </div>
+            @if (UserDetails.Any())
+            {
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var usr in UserDetails)
+                        {
+                            <tr>
+                                <td>@usr.FirstName</td>
+                                <td>@usr.LastName</td>
+                                <td>@usr.Email</td>
+                                <td>@usr.Phone</td>
+                                <td>
+                                    <button class="btn btn-primary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger">
+                                        <i class="bi bi-trash"></i> Delete 
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
     </div>
 }
 
