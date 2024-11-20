@@ -1,0 +1,110 @@
+﻿@page "/MotoClass"
+@using YumBlazor.Data
+@inject IMotoRepository _motoRepository
+<PageTitle>Moto Class</PageTitle>
+
+@if (IsProcessing)
+{
+    <div class="position-absolute w-75 h-75 d-flex flex-column align-items-center bg-white justify-content-center">
+        <img src="/images/loading.gif" alt="loading" />
+    </div>
+}
+else
+{
+    <div class="card shadow border-0 mt-4">
+
+        <div class="card-header bg-black bg-gradient m-lg-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="text-white py-2">Moto List</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-2 p-2">
+            <input @oninput="Search" placeholder="search... " class="p-3" style="width:100%" />
+
+        </div>
+
+
+        <div class="card-body p-4">
+            <div class="row pb-3">
+                <div class="col-12 text-end disabled">
+                    <a href="Category/Create" class="btn btn-lg btn-secondary disabled" style="width:250px"> <i class="bi bi-plus-square"></i> Add New Category</a>
+                </div>
+            </div>
+
+            @if (MotoLists.Any())
+            {
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var obj in MotoLists)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>@obj.Name</td>
+                                <td>@obj.Description</td>
+                                <td>@obj.Price</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            }
+            
+        </div>
+
+
+    </div>
+}
+
+@code {
+
+    private bool IsProcessing { get; set; } = true;
+
+    private IEnumerable<MotoList> MotoLists { get; set; } = new List<MotoList>();
+
+    private async void Search(ChangeEventArgs e)
+    {
+        var searchTerm = (string)e.Value;
+
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            await LoadMotoList(); // Reload all categories when search term is cleared.
+        }
+        else
+        {
+            // Filter the Categories collection by name.
+            MotoLists = MotoLists.Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            await LoadMotoList();
+            IsProcessing = false;
+            StateHasChanged();
+        }
+        // return   base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task LoadMotoList()
+    {
+        MotoLists = await _motoRepository.GetAllAsync();
+    }
+
+}
